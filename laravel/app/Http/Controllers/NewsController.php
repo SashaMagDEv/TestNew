@@ -17,4 +17,17 @@ class NewsController extends Controller
 
         return response()->json($news);
     }
+    public function show($id)
+    {
+        // Знайдіть статтю за її ID
+        $article = News::find($id);
+
+        // Перевірте, чи стаття існує
+        if (!$article) {
+            return response()->json(['error' => 'Article not found'], 404);
+        }
+
+        // Поверніть статтю як JSON
+        return response()->json($article);
+    }
 }
