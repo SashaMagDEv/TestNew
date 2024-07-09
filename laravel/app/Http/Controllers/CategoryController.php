@@ -17,8 +17,8 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        $category = Category::findOrFail($id); // Знайдемо категорію за ID
-        return response()->json($category); // Повернемо її у форматі JSON
+        $category = Category::findOrFail($id);
+        return response()->json($category);
     }
 
     public function getNewsByCategory($id)
