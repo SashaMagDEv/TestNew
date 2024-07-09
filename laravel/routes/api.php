@@ -15,10 +15,17 @@ use App\Http\Controllers\CategoryController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/news', [NewsController::class, 'index']);
+Route::post('/news', [NewsController::class, 'store']);
 Route::get('/categories', [CategoryController::class, 'index']);
-
 Route::get('news/{id}', [NewsController::class, 'show']);
+Route::get('news/{id}/edit', [NewsController::class, 'show']);
+Route::put('/news/{id}', [NewsController::class, 'update']);
+Route::get('categories/{id}', [CategoryController::class, 'show']);
+Route::get('categories/{id}/news', [CategoryController::class, 'getNewsByCategory']);
+Route::post('categories/{id}/add-news', [CategoryController::class, 'storeNews']);
+
+
+
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

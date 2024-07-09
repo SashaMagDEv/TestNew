@@ -17,15 +17,6 @@ class DatabaseSeeder extends Seeder
     {
         Category::factory()->count(10)->create();
         News::factory()->count(50)->create();
-        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-//        $this->call([
-//            CategorySeeder::class,
-//            NewsSeeder::class,
-//        ]);
     }
 }

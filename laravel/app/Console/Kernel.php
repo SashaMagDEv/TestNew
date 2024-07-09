@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\ArticleSeed::class,
         Commands\ArticleCategorySeed::class,
+        Commands\SeedAllData::class,
     ];
 
 
