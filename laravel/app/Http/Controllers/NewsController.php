@@ -61,4 +61,16 @@ class NewsController extends Controller
             return response()->json(['error' => 'Internal server error'], 500);
         }
     }
+    public function destroy($id)
+    {
+        $news = News::findOrFail($id);
+
+        try {
+            $news->delete();
+            return response()->json(['message' => 'News deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete news'], 500);
+        }
+    }
+
 }

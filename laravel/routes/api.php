@@ -23,6 +23,7 @@ Route::put('/news/{id}', [NewsController::class, 'update']);
 Route::get('categories/{id}', [CategoryController::class, 'show']);
 Route::get('categories/{id}/news', [CategoryController::class, 'getNewsByCategory']);
 Route::post('categories/{id}/add-news', [CategoryController::class, 'storeNews']);
+Route::delete('/news/{id}', [NewsController::class, 'destroy']);
 
 
 
