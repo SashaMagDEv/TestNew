@@ -15,19 +15,27 @@ use App\Http\Controllers\CategoryController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('/news', [NewsController::class, 'store']);
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('news/{id}', [NewsController::class, 'show']);
-Route::get('news/{id}/edit', [NewsController::class, 'show']);
-Route::put('/news/{id}', [NewsController::class, 'update']);
-Route::get('categories/{id}', [CategoryController::class, 'show']);
-Route::get('categories/{id}/news', [CategoryController::class, 'getNewsByCategory']);
-Route::post('categories/{id}/add-news', [CategoryController::class, 'storeNews']);
-Route::delete('/news/{id}', [NewsController::class, 'destroy']);
 
+Route::group(['prefix' => 'categories'], function () {
+    Route::get('/', [CategoryController::class, 'index']);
 
+    Route::group(['prefix' => '{id}'], function () {
+        Route::get('/', [CategoryController::class, 'show']);
+        Route::get('/news', [CategoryController::class, 'getNewsByCategory']);
+        Route::post('/add-news', [CategoryController::class, 'storeNews']);
+    });
+});
 
+Route::group(['prefix' => 'news'], function () {
+    Route::post('/', [NewsController::class, 'store']);
 
+    Route::group(['prefix' => '{id}'], function () {
+        Route::get('/', [NewsController::class, 'show']);
+        Route::get('/edit', [NewsController::class, 'show']);
+        Route::put('/', [NewsController::class, 'update']);
+        Route::delete('/', [NewsController::class, 'destroy']);
+    });
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

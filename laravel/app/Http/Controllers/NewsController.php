@@ -26,13 +26,7 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'thumbnail' => 'required|string|max:255',
-            'short_description' => 'required|string',
-            'date' => 'required|date',
-            'likes' => 'required|integer',
-        ]);
+        $validatedData = $request->validated();
 
         $news = News::create($validatedData);
 

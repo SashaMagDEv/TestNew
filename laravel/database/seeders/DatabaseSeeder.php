@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Category::factory()->count(10)->create();
-        News::factory()->count(50)->create();
+        $this->call(ArticleCategorySeeder::class);
+        $this->call(ArticleSeeder::class);
 
     }
 }

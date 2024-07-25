@@ -23,31 +23,26 @@ class CategoryController extends Controller
 
     public function getNewsByCategory($id)
     {
-        $category = Category::with(['news' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])->find($id);
+        try {
+            $category = Category::with(['news' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }])->findOrFail($id);
 
-        if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+            return response()->json([
+                'category' => $category,
+                'news' => $category->news()->paginate(5),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching news by category: ' . $e->getMessage());
+            return response()->json(['error' => 'Category not found'], 404);
         }
-
-        return response()->json([
-            'category' => $category,
-            'news' => $category->news()->paginate(5),
-        ]);
     }
 
     public function storeNews(Request $request, $categoryId)
     {
         try {
             $category = Category::findOrFail($categoryId);
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'thumbnail' => 'required|string|max:255',
-                'short_description' => 'required|string',
-                'date' => 'required|date',
-                'likes' => 'required|integer',
-            ]);
+            $validatedData = $request->validated();
             $validatedData['category_id'] = $category->id;
 
             $news = News::create($validatedData);
