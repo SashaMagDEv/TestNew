@@ -27,7 +27,7 @@ class NewsRequest extends FormRequest
             'short_description' => 'required|string',
             'date' => 'required|date',
             'likes' => 'required|integer',
-            'category_id' => 'required|integer',
+            'page' => 'nullable|integer|min:1',
         ];
     }
 

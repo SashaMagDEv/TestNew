@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Log;
 
 class NewsController extends Controller
 {
-    public function index()
+    public function index($category_id)
     {
         try {
-            $news = News::all();
+            $news = News::where('category_id', $category_id)->get();
             return response()->json($news);
         } catch (\Exception $e) {
             Log::error('Error fetching news: ' . $e->getMessage());
@@ -35,30 +35,16 @@ class NewsController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(NewsRequest $request, $id)
     {
-        $news = News::findOrFail($id);
-
-        $news->title = $request->input('title');
-        $news->thumbnail = $request->input('thumbnail');
-        $news->date = $request->input('date');
-        $news->likes = $request->input('likes');
-        $news->short_description = $request->input('short_description');
-
-        $news->save();
-
-        return response()->json(['message' => 'Новина успішно оновлена!'], 200);
-    }
-
-    public function destroy($id)
-    {
-        $news = News::findOrFail($id);
-
+        $validatedData = $request->validated();
         try {
-            $news->delete();
-            return response()->json(['message' => 'News deleted successfully'], 200);
+            $news = News::findOrFail($id);
+            $news->update($validatedData);
+            return response()->json($news, 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to delete news'], 500);
+            // Повернути помилку у разі винятку
+            return response()->json(['message' => 'Failed to update news'], 500);
         }
     }
 
@@ -73,24 +59,18 @@ class NewsController extends Controller
             return response()->json(['message' => 'Failed to create news'], 500);
         }
     }
-//    public function getNewsByCategory($categoryId, $page = 1)
-//    {
-//        try {
-//            Log::info('Fetching news by category', ['category_id' => $categoryId, 'page' => $page]);
-//
-//            $news = News::where('category_id', $categoryId)
-//                ->paginate(10, ['*'], 'page', $page);
-//
-//            Log::info('Pagination details', [
-//                'current_page' => $news->currentPage(),
-//                'total_pages' => $news->lastPage(),
-//                'total_items' => $news->total(),
-//            ]);
-//
-//            return response()->json($news);
-//        } catch (\Exception $e) {
-//            Log::error('Error fetching news', ['exception' => $e->getMessage()]);
-//            return response()->json(['error' => 'Failed to fetch news'], 500);
-//        }
-//    }
+
+    public function destroy($id)
+    {
+        try {
+            $news = News::findOrFail($id);
+
+            $news->delete();
+
+            return response()->json(['message' => 'Новина успішно видалена!'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error deleting news: ' . $e->getMessage());
+            return response()->json(['error' => 'Не вдалося видалити новину'], 500);
+        }
+    }
 }
