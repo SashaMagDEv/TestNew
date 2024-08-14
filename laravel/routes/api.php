@@ -33,7 +33,7 @@ Route::group(['prefix' => 'news'], function () {
         Route::get('/', [NewsController::class, 'show']);
         Route::get('/edit', [NewsController::class, 'show']);
         Route::put('/', [NewsController::class, 'update']);
-        Route::delete('/', [NewsController::class, 'destroy']);
+        Route::delete('/', [NewsController::class, 'deleteNews']);
     });
 });
 

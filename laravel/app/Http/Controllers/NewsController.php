@@ -60,7 +60,7 @@ class NewsController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function deleteNews($id)
     {
         try {
             $news = News::findOrFail($id);
