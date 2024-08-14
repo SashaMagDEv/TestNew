@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewsRequest;
 use App\Models\Category;
 use App\Models\News;
 use Illuminate\Http\Request;
@@ -11,46 +12,41 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return response()->json($categories);
+        try {
+            $categories = Category::all();
+            return response()->json($categories);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Помилка на сервері'], 500);
+        }
     }
 
     public function show($id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['message' => 'Категорія не знайдена'], 404);
+        }
         return response()->json($category);
     }
 
-    public function getNewsByCategory($id)
+    public function getNewsByCategory($id, Request $request)
     {
-        try {
-            $category = Category::with(['news' => function ($query) {
-                $query->orderBy('created_at', 'desc');
-            }])->findOrFail($id);
+        $page = $request->query('page', 1);
+        $perPage = 10;
 
-            return response()->json([
-                'category' => $category,
-                'news' => $category->news()->paginate(5),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error fetching news by category: ' . $e->getMessage());
-            return response()->json(['error' => 'Category not found'], 404);
-        }
+        $newsQuery = News::where('category_id', $id);
+        $total = $newsQuery->count();
+        $news = $newsQuery->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $news->items(),
+            'meta' => [
+                'current_page' => $news->currentPage(),
+                'last_page' => $news->lastPage(),
+                'per_page' => $news->perPage(),
+                'total' => $news->total()
+            ]
+        ]);
     }
 
-    public function storeNews(Request $request, $categoryId)
-    {
-        try {
-            $category = Category::findOrFail($categoryId);
-            $validatedData = $request->validated();
-            $validatedData['category_id'] = $category->id;
-
-            $news = News::create($validatedData);
-
-            return response()->json($news, 201);
-        } catch (\Exception $e) {
-            Log::error('Error creating news: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create news'], 500);
-        }
-    }
 }

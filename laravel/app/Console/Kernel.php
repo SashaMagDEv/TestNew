@@ -24,9 +24,10 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
-//    protected $commands = [
+    protected $commands = [
+        \App\Console\Commands\LogTestCommand::class,
 //        Commands\ArticleSeed::class,
 //        Commands\ArticleCategorySeed::class,
 //        Commands\SeedAllData::class,
-//    ];
+    ];
 }
