@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\NewsRequest;
+use App\Models\Category;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class NewsController extends Controller
 {
-    public function index($category_id)
+    public function index(Request $request)
     {
         try {
-            $news = News::where('category_id', $category_id)->get();
+            $category_id = $request->query('category_id');
+
+            if ($category_id) {
+                $news = News::where('category_id', $category_id)->get();
+            } else {
+                $news = News::all();
+            }
+
             return response()->json($news);
         } catch (\Exception $e) {
             Log::error('Error fetching news: ' . $e->getMessage());
@@ -20,11 +28,13 @@ class NewsController extends Controller
         }
     }
 
+
     public function show($id)
     {
         try {
             $news = News::find($id);
-
+            $category = Category::find($news->category_id);
+            $news['category_name'] = $category->name;
             if (!$news) {
                 return response()->json(['error' => 'News not found'], 404);
             }
@@ -43,7 +53,6 @@ class NewsController extends Controller
             $news->update($validatedData);
             return response()->json($news, 200);
         } catch (\Exception $e) {
-            // Повернути помилку у разі винятку
             return response()->json(['message' => 'Failed to update news'], 500);
         }
     }

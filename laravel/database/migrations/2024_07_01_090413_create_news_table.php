@@ -20,11 +20,6 @@ return new class extends Migration
             $table->text('short_description');
             $table->integer('likes');
             $table->timestamps();
-
-            $table->foreign('category_id')
-                ->references('id')
-                ->on('categories')
-                ->onDelete('cascade');
         });
     }
 
